@@ -56,10 +56,7 @@ def healthcheckerview(request):
     if request.method == 'GET':
         return render(request, 'campaigngenerator/healthchecker.html')
     else:
-        #test(request)
         devices = HealthCheckerForm(request.POST)
-        #if request.POST['devices']:
-        #devices = request.POST['devices']
         devices = inputformat(request)
         devices = '|'.join(['-'.join(x) for x in devices])
         return render(request, 'campaigngenerator/viewhealthchecker.html', {'devices': devices})
@@ -88,6 +85,74 @@ class HealthCheckerApi(APIView):
             command = f'test {devices} test'
             return Response({'Command': command})
 
+# Splitter is to split devices as per predefined template,row/columun
+# Splitter Template
+def splitastemplateview(request):
+    if request.method == 'GET':
+        return render(request, 'campaigngenerator/splitter.html')
+    else:
+        devices = inputformat(request)
+        devices = ['-'.join(x) for x in devices]
+        r1_2_3_lst = []
+        r4_5_6_lst = []
+        r7_8_9_lst = []
+        r10_11_12_lst =[]
+        r13_14_15_lst = []
+        r16_lst = []
+        r1_3_5_t1_lst = []
+        r2_4_7_t1_lst = []
+        r6_8_10_t1_lst = []
+        r9_11_13_t1_lst = []
+        r12_14_15_t1_lst = []
+        r16_t1_lst = []
+
+        for device in devices:
+            if (re.search(r'\bt2-r1\b',device) or re.search(r'\bs.*-r1\b',device)
+                or re.search(r'\bt2-r3\b',device) or re.search(r'\bs.*-r3\b',device)
+                or re.search(r'\bt2-r2\b',device) or re.search(r'\bs.*-r2\b',device)):
+                r1_2_3_lst.append(device)
+            elif (re.search(r'\bt2-r4\b',device) or re.search(r'\bs.*-r4\b',device)
+                  or re.search(r'\bt2-r5\b',device) or re.search(r'\bs.*-r5\b',device)
+                  or re.search(r'\bt2-r6\b',device) or re.search(r'\bs.*-r6\b',device)):
+                r4_5_6_lst.append(device)
+            elif (re.search(r'\bt2-r7\b',device) or re.search(r'\bs.*-r7\b',device)
+                  or re.search(r'\bt2-r8\b',device) or re.search(r'\bs.*-r8\b',device)
+                  or re.search(r'\bt2-r9\b',device) or re.search(r'\bs.*-r9\b',device)):
+                r7_8_9_lst.append(device)
+            elif (re.search(r'\bt2-r10\b',device) or re.search(r'\bs.*-r10\b',device)
+                  or re.search(r'\bt2-r11\b',device) or re.search(r'\bs.*-r11\b',device)
+                  or re.search(r'\bt2-r12\b',device) or re.search(r'\bs.*-r12\b',device)):
+                r10_11_12_lst.append(device)
+            elif (re.search(r'\bt2-r13\b',device) or re.search(r'\bs.*-r13\b',device)
+                  or re.search(r'\bt2-r14\b',device) or re.search(r'\bs.*-r14\b',device)
+                  or re.search(r'\bt2-r15\b',device) or re.search(r'\bs.*-r15\b',device)):
+                r13_14_15_lst.append(device)
+            elif re.search(r'\bt2-r16\b',device) or re.search(r'\bs.*-r16\b',device):
+                r16_lst.append(device)
+            elif (re.search(r'\bt1-r1\b',device)
+                or re.search(r'\bt1-r3\b',device)
+                or re.search(r'\bt1-r5\b',device)):
+                r1_3_5_t1_lst.append(device)
+            elif (re.search(r'\bt1-r2\b',device)
+                  or re.search(r'\bt1-r4\b',device)
+                  or re.search(r'\bt1-r7\b',device)):
+                r2_4_7_t1_lst.append(device)
+            elif (re.search(r'\bt1-r6\b',device)
+                  or re.search(r'\bt1-r8\b',device)
+                  or re.search(r'\bt1-r10\b',device)):
+                r6_8_10_t1_lst.append(device)
+            elif (re.search(r'\bt1-r9\b',device)
+                  or re.search(r'\bt1-r11\b',device)
+                  or re.search(r'\bt1-r13\b',device)):
+                r9_11_13_t1_lst.append(device)
+            elif (re.search(r'\bt1-r12\b',device)
+                  or re.search(r'\bt1-r14\b',device)
+                  or re.search(r'\bt1-r15\b',device)):
+                r12_14_15_t1_lst.append(device)
+            elif re.search(r'\bt1-r16\b',device):
+                r16_t1_lst.append(device)
+        return render(request, 'campaigngenerator/viewsplitter.html', {**locals()})
+
 @login_required
 def campaigncreator(request):
     #form = Campaigns()
@@ -97,23 +162,11 @@ def campaigncreator(request):
         form = CampaignCeatorForm(request.POST)
         if request.POST['devices']:
             data = inputformat(request)
-            #devices = request.POST['devices']
-            #devices = re.sub('[,; |\'\"]', ' ', devices)
-#            data = []
-#            splitter = re.split('\r\n| |,|;',devices)
-            #test = re.split('.',1)
-#            for item in splitter:
-#                item = item.split('.')[0].rstrip()
-#                if item !="":
-#                    data.append(item)
-#            data.sort()
-#            data = [y for y in [x.split('-') for x in data]]
 
             for col in range(len(data[0]) -1,-1,-1):
                 result = []
                 def add_result():
                     result.append([])
-                    #fulltext = result
 
                     if headstr:
                         result[-1] += headstr.split('-')

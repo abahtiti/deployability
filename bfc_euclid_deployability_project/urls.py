@@ -31,10 +31,15 @@ urlpatterns = [
     # Health Checker view
     path('healthchecker/', views.healthcheckerview, name='healthchecker'),
 
+    # splitter view
+    path('splitter/', views.splitastemplateview, name='splitter'),
+
 
     # API View
     # Health CHecker
     path('healthcheckerapi/', views.HealthCheckerApi.as_view())
+
+
 
 
 

@@ -1,0 +1,19 @@
+
+
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+
+<h1> Template Splitter</h1>
+<h2> Group devices as per Hercules Template</h2>
+
+<form method='POST' action="{% url 'splitter' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <textarea name = "devices" cols="139" rows="15"></textarea>
+  <br />
+<div align="center"> <input type="submit" value="Get Groups!"/></div>
+  </form>
+
+{% endblock %}
