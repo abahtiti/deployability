@@ -1,0 +1,18 @@
+
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+
+{{ devices }}
+{% for blocker in blockers %}
+{% if reg in blocker.title %}
+<ul>
+  <li>
+    <a href="{% url 'viewblocker' blocker.id %}">
+    {{ blocker.title }}
+    </a>
+  </li>
+</ul>
+{% endif %}
+{% endfor %}
+{% endblock %}

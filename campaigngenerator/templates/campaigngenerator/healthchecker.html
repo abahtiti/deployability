@@ -1,0 +1,18 @@
+
+
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+
+<h1> Health Checker</h1>
+
+<form method='POST' action="{% url 'healthchecker' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <textarea name = "devices" cols="80" rows="10"></textarea>
+  <br />
+  <input type="submit" value="Get Command!" />
+  </form>
+
+{% endblock %}

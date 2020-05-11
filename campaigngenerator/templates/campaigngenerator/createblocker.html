@@ -1,0 +1,16 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+
+<h1>Create Blocker</h1>
+
+<h2>{{ error }} </h2>
+
+<form method="POST">
+ {% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Save</button>
+</form>
+<br>
+
+{% endblock %}

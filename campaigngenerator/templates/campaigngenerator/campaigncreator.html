@@ -1,0 +1,18 @@
+
+
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+
+<h1> Campaign Generator</h1>
+
+<form method='POST' action="{% url 'campaigncreator' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <textarea name = "devices" cols="40" rows="10"></textarea>
+  <br />
+  <input type="submit" value="Generate!" />
+  </form>
+
+{% endblock %}

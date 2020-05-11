@@ -1,0 +1,22 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+Completd Blockers
+
+<ul>
+  {% for blocker in blockers %}
+  <li>
+    <a href="{% url 'viewblocker' blocker.id %}">
+    {{ blocker.title }}
+
+
+    </a>
+
+  </li>
+  {% endfor %}
+  {% endif %}
+</ul>
+
+{% endblock %}

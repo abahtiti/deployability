@@ -1,0 +1,24 @@
+{% if user.is_authenticated %}
+
+Logged In as {{ user.username }}
+
+<a href="{% url 'createblocker' %}">Create a new blocker</a>
+<a href="{% url 'currentblockers' %}">Active Blockers</a>
+<a href="{% url 'completedblockers' %}">Completed Blockers</a>
+<a href="{% url 'allblockers' %}">All Blockers</a>
+
+<form action="{% url 'logoutuser' %}" method ="POST">
+  {% csrf_token %}
+
+ <button type="submit">Logout</button>
+</form>
+
+{% else %}
+
+<a href="{% url 'signupuser' %}">Sign Up</a>
+<a href="{% url 'loginuser' %}">Login</a>
+
+{% endif %}
+<br>
+<br>
+{% block content %} {% endblock%}

@@ -1,0 +1,28 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+{{ error }}
+{{ blocker.title }}
+
+<form method="POST">
+  {% csrf_token %}
+{{ form.as_p}}
+<button type="submit">Save</button>
+</form>
+
+<form method="POST" action="{% url 'completeblocker' blocker.id %}">
+  {% csrf_token %}
+<button type="submit">Complete</button>
+</form>
+
+<form method="POST" action="{% url 'notcompleteblocker' blocker.id %}">
+  {% csrf_token %}
+<button type="submit">Not Completed</button>
+</form>
+
+<form method="POST" action="{% url 'deleteblocker' blocker.id %}">
+  {% csrf_token %}
+<button type="submit">Delete</button>
+</form>
+
+{% endblock %}

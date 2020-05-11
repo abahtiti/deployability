@@ -1,0 +1,20 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+Completd Blockers
+
+<ul>
+  {% for blocker in blockers %}
+  <li>
+    <a href="{% url 'viewblocker' blocker.id %}">
+    {{ blocker.title }} completed on
+    {{ blocker.datecompleted |date:'M j Y H:i' }}
+    </a>
+  </li>
+  {% endfor %}
+  {% endif %}
+</ul>
+
+{% endblock %}

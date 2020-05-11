@@ -1,0 +1,24 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+Active Blockers
+
+<ul>
+  {% for blocker in blockers %}
+  <li>
+    <a href="{% url 'viewblocker' blocker.id %}">
+    {{ blocker.title }}
+    </a>
+  </li>
+  {% endfor %}
+  {% endif %}
+</ul>
+
+<form method="GET" action="{% url 'allblockers' %}">
+  {% csrf_token %}
+<button type="submit">Show All Blockers</button>
+</form>
+
+{% endblock %}
