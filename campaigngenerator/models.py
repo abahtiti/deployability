@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create A campaigngenerator models -->done
 
 
 class Blocker(models.Model):
@@ -23,14 +22,5 @@ class Campaigns(models.Model):
     #like = models.ChoiceField(choices=CHOICES, widget=models.RadioSelect)
 
     # pub_date
-    # expected to fix
+    # ETA
     # body
-
-# Add the campaigngenerator app to the settings
-
-
-# create a migration
-
-# Migrate
-
-# Add to the admin

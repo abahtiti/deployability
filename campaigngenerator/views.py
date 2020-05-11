@@ -6,10 +6,12 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-#from .forms import BlockerForm
 from .models import Blocker,Campaigns
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from campaigngenerator import serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
 import re
 
 #class HomeView(TemplateView):
@@ -33,18 +35,7 @@ def home(request):
 #    form = CampaignCeator()
 #    return render(request, 'campaigngenerator/campaigncreator.html', {'form':form})
 
-def healthchecker(request):
-    if request.method == 'GET':
-        return render(request, 'campaigngenerator/healthchecker.html')
-    else:
-        #test(request)
-        #devices = HealthCheckerForm(request.POST)
-        #if request.POST['devices']:
-        #devices = request.POST['devices']
-        devices = inputformat(request)
-        devices = '|'.join(['-'.join(x) for x in devices])
-        return render(request, 'campaigngenerator/viewhealthchecker.html', {'devices': devices})
-
+# Prepare Input Data format
 def inputformat(request):
     devices = request.POST['devices']
     devices = re.sub('[,; |\'\"]', ' ', devices)
@@ -58,6 +49,44 @@ def inputformat(request):
     data.sort()
     data = [y for y in [x.split('-') for x in data]]
     return data
+
+# Health Checker is to check device management eth0, NSM_DIFF, device status(down/shifted)
+# Health Checker Template
+def healthcheckerview(request):
+    if request.method == 'GET':
+        return render(request, 'campaigngenerator/healthchecker.html')
+    else:
+        #test(request)
+        devices = HealthCheckerForm(request.POST)
+        #if request.POST['devices']:
+        #devices = request.POST['devices']
+        devices = inputformat(request)
+        devices = '|'.join(['-'.join(x) for x in devices])
+        return render(request, 'campaigngenerator/viewhealthchecker.html', {'devices': devices})
+
+# Heatlth Checker API
+class HealthCheckerApi(APIView):
+    """Health Checker API View"""
+    serializer_class = serializers.HealthCheckerSerializer
+
+    def get(self, request, format=None):
+        """Returns a list of APIView features"""
+        an_apiview = [
+            'Uses HTTP methods as function (get, post)',
+            'Use the command given to check device management eth0, NSM_DIFF, device status(down/shifted)',
+        ]
+        return Response({'message': 'HealthCheckerApi', 'an_apiview': an_apiview})
+
+    def post(self, request):
+        """Provide a command with input devices"""
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            devices = serializer.validated_data.get('devices')
+            devices = inputformat(request)
+            devices = '|'.join(['-'.join(x) for x in devices])
+            command = f'test {devices} test'
+            return Response({'Command': command})
 
 @login_required
 def campaigncreator(request):

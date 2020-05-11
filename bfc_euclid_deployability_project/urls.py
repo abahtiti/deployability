@@ -28,8 +28,13 @@ urlpatterns = [
     path('campaigncreator/', views.campaigncreator, name='campaigncreator'),
     path('allcampaigns/', views.allcampaigns, name='allcampaigns'),
 
-    # Health Checker
-    path('healthchecker/', views.healthchecker, name='healthchecker'),
+    # Health Checker view
+    path('healthchecker/', views.healthcheckerview, name='healthchecker'),
+
+
+    # API View
+    # Health CHecker
+    path('healthcheckerapi/', views.HealthCheckerApi.as_view())
 
 
 
