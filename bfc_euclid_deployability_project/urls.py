@@ -32,7 +32,7 @@ urlpatterns = [
     path('healthchecker/', views.healthcheckerview, name='healthchecker'),
 
     # splitter view
-    path('splitter/', views.splitastemplateview, name='splitter'),
+    path('nhschecker/', views.splitastemplateview, name='nhschecker'),
 
 
     # API View

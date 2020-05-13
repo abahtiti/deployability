@@ -58,8 +58,12 @@ def healthcheckerview(request):
     else:
         devices = HealthCheckerForm(request.POST)
         devices = inputformat(request)
-        devices = '|'.join(['-'.join(x) for x in devices])
-        return render(request, 'campaigngenerator/viewhealthchecker.html', {'devices': devices})
+        if devices != []:
+            devices = '|'.join(['-'.join(x) for x in devices])
+            return render(request, 'campaigngenerator/viewhealthchecker.html', {'devices': devices})
+        else:
+            return render(request, 'campaigngenerator/healthchecker.html')
+
 
 # Heatlth Checker API
 class HealthCheckerApi(APIView):
@@ -92,66 +96,84 @@ def splitastemplateview(request):
         return render(request, 'campaigngenerator/splitter.html')
     else:
         devices = inputformat(request)
-        devices = ['-'.join(x) for x in devices]
-        r1_2_3_lst = []
-        r4_5_6_lst = []
-        r7_8_9_lst = []
-        r10_11_12_lst =[]
-        r13_14_15_lst = []
-        r16_lst = []
-        r1_3_5_t1_lst = []
-        r2_4_7_t1_lst = []
-        r6_8_10_t1_lst = []
-        r9_11_13_t1_lst = []
-        r12_14_15_t1_lst = []
-        r16_t1_lst = []
+        if devices != []:
+            devices = ['-'.join(x) for x in devices]
+            r1_2_3_lst = []
+            r4_5_6_lst = []
+            r7_8_9_lst = []
+            r10_11_12_lst =[]
+            r13_14_15_lst = []
+            r16_lst = []
+            r1_5_9_t1_lst = []
+            r2_10_13_t1_lst = []
+            r3_6_14_t1_lst = []
+            r4_7_11_t1_lst = []
+            r8_12_15_t1_lst = []
+            r16_t1_lst = []
 
-        for device in devices:
-            if (re.search(r'\bt2-r1\b',device) or re.search(r'\bs.*-r1\b',device)
-                or re.search(r'\bt2-r3\b',device) or re.search(r'\bs.*-r3\b',device)
-                or re.search(r'\bt2-r2\b',device) or re.search(r'\bs.*-r2\b',device)):
-                r1_2_3_lst.append(device)
-            elif (re.search(r'\bt2-r4\b',device) or re.search(r'\bs.*-r4\b',device)
-                  or re.search(r'\bt2-r5\b',device) or re.search(r'\bs.*-r5\b',device)
-                  or re.search(r'\bt2-r6\b',device) or re.search(r'\bs.*-r6\b',device)):
-                r4_5_6_lst.append(device)
-            elif (re.search(r'\bt2-r7\b',device) or re.search(r'\bs.*-r7\b',device)
-                  or re.search(r'\bt2-r8\b',device) or re.search(r'\bs.*-r8\b',device)
-                  or re.search(r'\bt2-r9\b',device) or re.search(r'\bs.*-r9\b',device)):
-                r7_8_9_lst.append(device)
-            elif (re.search(r'\bt2-r10\b',device) or re.search(r'\bs.*-r10\b',device)
-                  or re.search(r'\bt2-r11\b',device) or re.search(r'\bs.*-r11\b',device)
-                  or re.search(r'\bt2-r12\b',device) or re.search(r'\bs.*-r12\b',device)):
-                r10_11_12_lst.append(device)
-            elif (re.search(r'\bt2-r13\b',device) or re.search(r'\bs.*-r13\b',device)
-                  or re.search(r'\bt2-r14\b',device) or re.search(r'\bs.*-r14\b',device)
-                  or re.search(r'\bt2-r15\b',device) or re.search(r'\bs.*-r15\b',device)):
-                r13_14_15_lst.append(device)
-            elif re.search(r'\bt2-r16\b',device) or re.search(r'\bs.*-r16\b',device):
-                r16_lst.append(device)
-            elif (re.search(r'\bt1-r1\b',device)
-                or re.search(r'\bt1-r3\b',device)
-                or re.search(r'\bt1-r5\b',device)):
-                r1_3_5_t1_lst.append(device)
-            elif (re.search(r'\bt1-r2\b',device)
-                  or re.search(r'\bt1-r4\b',device)
-                  or re.search(r'\bt1-r7\b',device)):
-                r2_4_7_t1_lst.append(device)
-            elif (re.search(r'\bt1-r6\b',device)
-                  or re.search(r'\bt1-r8\b',device)
-                  or re.search(r'\bt1-r10\b',device)):
-                r6_8_10_t1_lst.append(device)
-            elif (re.search(r'\bt1-r9\b',device)
-                  or re.search(r'\bt1-r11\b',device)
-                  or re.search(r'\bt1-r13\b',device)):
-                r9_11_13_t1_lst.append(device)
-            elif (re.search(r'\bt1-r12\b',device)
-                  or re.search(r'\bt1-r14\b',device)
-                  or re.search(r'\bt1-r15\b',device)):
-                r12_14_15_t1_lst.append(device)
-            elif re.search(r'\bt1-r16\b',device):
-                r16_t1_lst.append(device)
-        return render(request, 'campaigngenerator/viewsplitter.html', {**locals()})
+            for device in devices:
+                if (re.search(r'\bt2-r1\b',device) or re.search(r'\bs.*-r1\b',device)
+                    or re.search(r'\bt2-r3\b',device) or re.search(r'\bs.*-r3\b',device)
+                    or re.search(r'\bt2-r2\b',device) or re.search(r'\bs.*-r2\b',device)):
+                    r1_2_3_lst.append(device)
+                elif (re.search(r'\bt2-r4\b',device) or re.search(r'\bs.*-r4\b',device)
+                      or re.search(r'\bt2-r5\b',device) or re.search(r'\bs.*-r5\b',device)
+                      or re.search(r'\bt2-r6\b',device) or re.search(r'\bs.*-r6\b',device)):
+                    r4_5_6_lst.append(device)
+                elif (re.search(r'\bt2-r7\b',device) or re.search(r'\bs.*-r7\b',device)
+                      or re.search(r'\bt2-r8\b',device) or re.search(r'\bs.*-r8\b',device)
+                      or re.search(r'\bt2-r9\b',device) or re.search(r'\bs.*-r9\b',device)):
+                    r7_8_9_lst.append(device)
+                elif (re.search(r'\bt2-r10\b',device) or re.search(r'\bs.*-r10\b',device)
+                      or re.search(r'\bt2-r11\b',device) or re.search(r'\bs.*-r11\b',device)
+                      or re.search(r'\bt2-r12\b',device) or re.search(r'\bs.*-r12\b',device)):
+                    r10_11_12_lst.append(device)
+                elif (re.search(r'\bt2-r13\b',device) or re.search(r'\bs.*-r13\b',device)
+                      or re.search(r'\bt2-r14\b',device) or re.search(r'\bs.*-r14\b',device)
+                      or re.search(r'\bt2-r15\b',device) or re.search(r'\bs.*-r15\b',device)):
+                    r13_14_15_lst.append(device)
+                elif re.search(r'\bt2-r16\b',device) or re.search(r'\bs.*-r16\b',device):
+                    r16_lst.append(device)
+                elif (re.search(r'\bt1-r1\b',device)
+                    or re.search(r'\bt1-r3\b',device)
+                    or re.search(r'\bt1-r5\b',device)):
+                    r1_5_9_t1_lst.append(device)
+                elif (re.search(r'\bt1-r2\b',device)
+                      or re.search(r'\bt1-r10\b',device)
+                      or re.search(r'\bt1-r13\b',device)):
+                    r2_10_13_t1_lst.append(device)
+                elif (re.search(r'\bt1-r3\b',device)
+                      or re.search(r'\bt1-r6\b',device)
+                      or re.search(r'\bt1-r14\b',device)):
+                    r3_6_14_t1_lst.append(device)
+                elif (re.search(r'\bt1-r4\b',device)
+                      or re.search(r'\bt1-r7\b',device)
+                      or re.search(r'\bt1-r11\b',device)):
+                    r4_7_11_t1_lst.append(device)
+                elif (re.search(r'\bt1-r8\b',device)
+                      or re.search(r'\bt1-r12\b',device)
+                      or re.search(r'\bt1-r15\b',device)):
+                    r8_12_15_t1_lst.append(device)
+                elif re.search(r'\bt1-r16\b',device):
+                    r16_t1_lst.append(device)
+            def printout(group):
+                return("./nhs_deployable_group.py device_deployment --devices {} --operation concurrent_shift".format(",".join(group)))
+
+            r1_2_3_lst = printout(r1_2_3_lst) if r1_2_3_lst else 0
+            r4_5_6_lst = printout(r4_5_6_lst) if r4_5_6_lst else 0
+            r7_8_9_lst = printout(r7_8_9_lst) if r7_8_9_lst else 0
+            r10_11_12_lst = printout(r10_11_12_lst) if r10_11_12_lst else 0
+            r13_14_15_lst = printout(r13_14_15_lst) if r13_14_15_lst else 0
+            r16_lst = printout(r16_lst) if r16_lst else 0
+            r1_5_9_t1_lst = printout(r1_5_9_t1_lst) if r1_5_9_t1_lst else 0
+            r2_10_13_t1_lst = printout(r2_10_13_t1_lst) if r2_10_13_t1_lst else 0
+            r3_6_14_t1_lst = printout(r3_6_14_t1_lst) if r3_6_14_t1_lst else 0
+            r4_7_11_t1_lst = printout(r4_7_11_t1_lst) if r4_7_11_t1_lst else 0
+            r8_12_15_t1_lst = printout(r8_12_15_t1_lst) if r8_12_15_t1_lst else 0
+            r16_t1_lst = printout(r16_t1_lst) if r16_t1_lst else 0
+            return render(request, 'campaigngenerator/viewsplitter.html', {'locals':locals()})
+        else:
+            return render(request, 'campaigngenerator/nhschecker.html')
 
 @login_required
 def campaigncreator(request):
@@ -162,12 +184,10 @@ def campaigncreator(request):
         form = CampaignCeatorForm(request.POST)
         if request.POST['devices']:
             data = inputformat(request)
-
             for col in range(len(data[0]) -1,-1,-1):
                 result = []
                 def add_result():
                     result.append([])
-
                     if headstr:
                         result[-1] += headstr.split('-')
                     if len(list(findnum)) > 1:
@@ -176,17 +196,14 @@ def campaigncreator(request):
                         result[-1] += [f'{findstr}{findnum[0]}']
                     if tailstr:
                         result[-1] += tailstr.split('-')
-
                 _headstr = lambda x, y: '-'.join(x[:y])
                 _tailstr = lambda x, y: '-'.join(x[y + 1:])
                 _findstr = lambda x: re.findall('(\D+)', x)[0] if re.findall('(\D+)', x) else ''
                 _findnum = lambda x: re.findall('(\d+)', x)[0] if re.findall('(\d+)', x) else ''
-
                 headstr = _headstr(data[0], col)
                 tailstr = _tailstr(data[0], col)
                 findstr = _findstr(data[0][col])
                 findnum = []
-
                 for row in data:
                     if headstr + findstr + tailstr != _headstr(row, col) + _findstr(row[col]) + _tailstr(row, col):
                       add_result()
@@ -196,13 +213,10 @@ def campaigncreator(request):
                       findnum = []
                     if _findnum(row[col]) not in findnum:
                       findnum.append(_findnum(row[col]))
-
                 else:
                     add_result()
-
                 data = result[:]
-                devices = ['-'.join(x) for x in result]
-
+                devices = "|".join(['-'.join(x) for x in result])
             reg = devices[0].split("-c1-")[0]
             blockers = Blocker.objects.filter(datecompleted__isnull=True)
             return render(request, 'campaigngenerator/viewcampaigns.html', {'devices':devices, 'blockers':blockers, 'reg':reg})

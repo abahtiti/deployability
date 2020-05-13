@@ -5,9 +5,9 @@
 {% block content %}
 
 <h1> Template Splitter</h1>
-<h2> Group devices as per Hercules Template</h2>
+<h2> Group devices as per Hercules Template for NHS QUERY</h2>
 
-<form method='POST' action="{% url 'splitter' %}">
+<form method='POST' action="{% url 'nhschecker' %}">
   {% csrf_token %}
   {{ form.as_p }}
 
@@ -16,4 +16,5 @@
 <div align="center"> <input type="submit" value="Get Groups!"/></div>
   </form>
 
+{{ error }}
 {% endblock %}

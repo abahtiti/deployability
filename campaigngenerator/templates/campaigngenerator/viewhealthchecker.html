@@ -58,7 +58,7 @@ Health Checker Command
 <br>
 <br>
 
-<textarea rows="35" cols="155">test {{ devices }} test2</textarea>
+<textarea id="myInput" rows="35" cols="155">test {{ devices }} test2</textarea>
 
 <div class="tooltip">
 <button onclick="myFunction()" onmouseout="outFunc()">
@@ -86,8 +86,6 @@ function outFunc() {
 </script>
 </body>
 
-{% if reg %}
-<textarea rows="35" cols="155"> {{ reg }} </textarea>
-{% endif %}
+
 
 {% endblock %}
