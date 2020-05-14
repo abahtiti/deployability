@@ -6,13 +6,14 @@
 
 <h1> Campaign Generator</h1>
 
+<p style="color:red"> {{ errorbadformat }}</p>
 <form method='POST' action="{% url 'campaigncreator' %}">
   {% csrf_token %}
   {{ form.as_p }}
 
-  <textarea name = "devices" cols="138" rows="15"></textarea>
+  <textarea name = "devices" cols="139" rows="15"></textarea>
   <br />
-  <div align="center"><input type="submit" value="Generate!"/></div>
+  <div style="padding-right:320px" align="right"><input type="submit" value="Generate!"/></div>
   </form>
 
 {% endblock %}

@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from campaigngenerator import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from datetime import timedelta, date, datetime
 import re
 
 #class HomeView(TemplateView):
@@ -26,14 +27,6 @@ import re
 def home(request):
     form = HomeForm()
     return render(request, 'campaigngenerator/home.html', {'form':form})
-
-#def create(response):
-#    form = HomeForm()
-#    return render(response, "campaigngenerator/home.html", {'form':form})
-
-#def campaigncreator(request):
-#    form = CampaignCeator()
-#    return render(request, 'campaigngenerator/campaigncreator.html', {'form':form})
 
 # Prepare Input Data format
 def inputformat(request):
@@ -59,8 +52,11 @@ def healthcheckerview(request):
         devices = HealthCheckerForm(request.POST)
         devices = inputformat(request)
         if devices != []:
-            devices = '|'.join(['-'.join(x) for x in devices])
-            return render(request, 'campaigngenerator/viewhealthchecker.html', {'devices': devices})
+            devices = ['-'.join(x) for x in devices]
+            length = 'Number of devices: {}'.format(len(devices))
+            devices = '|'.join(devices)
+            command = './check_port -p "name:/{}/"'.format(devices)
+            return render(request, 'campaigngenerator/viewhealthchecker.html', {'command': command,'length':length})
         else:
             return render(request, 'campaigngenerator/healthchecker.html')
 
@@ -98,19 +94,9 @@ def splitastemplateview(request):
         devices = inputformat(request)
         if devices != []:
             devices = ['-'.join(x) for x in devices]
-            r1_2_3_lst = []
-            r4_5_6_lst = []
-            r7_8_9_lst = []
-            r10_11_12_lst =[]
-            r13_14_15_lst = []
-            r16_lst = []
-            r1_5_9_t1_lst = []
-            r2_10_13_t1_lst = []
-            r3_6_14_t1_lst = []
-            r4_7_11_t1_lst = []
-            r8_12_15_t1_lst = []
-            r16_t1_lst = []
-
+            reg = re.split('-c1-|-e1-',devices[0])[0]
+            blockers = Blocker.objects.filter(datecompleted__isnull=True)
+            r1_2_3_lst,r4_5_6_lst,r7_8_9_lst,r10_11_12_lst,r13_14_15_lst,r16_lst,r1_5_9_t1_lst,r2_10_13_t1_lst,r3_6_14_t1_lst,r4_7_11_t1_lst,r8_12_15_t1_lst,r16_t1_lst = [[] for _ in range(12)]
             for device in devices:
                 if (re.search(r'\bt2-r1\b',device) or re.search(r'\bs.*-r1\b',device)
                     or re.search(r'\bt2-r3\b',device) or re.search(r'\bs.*-r3\b',device)
@@ -158,24 +144,60 @@ def splitastemplateview(request):
                     r16_t1_lst.append(device)
             def printout(group):
                 return("./nhs_deployable_group.py device_deployment --devices {} --operation concurrent_shift".format(",".join(group)))
+            rsdict = {}
+            rsdict.update( {'r1_2_3_lst' : printout(r1_2_3_lst)} ) if r1_2_3_lst else 0
+            rsdict.update( {'r4_5_6_lst' : printout(r4_5_6_lst)} ) if r4_5_6_lst else 0
+            rsdict.update( {'r7_8_9_lst' : printout(r7_8_9_lst)} ) if r7_8_9_lst else 0
+            rsdict.update( {'r10_11_12_lst' : printout(r10_11_12_lst)} ) if r10_11_12_lst else 0
+            rsdict.update( {'r13_14_15_lst' : printout(r13_14_15_lst)} ) if r13_14_15_lst else 0
+            rsdict.update( {'r16_lst' : printout(r16_lst)} ) if r16_lst else 0
+            rsdict.update( {'r1_5_9_t1_lst' : printout(r1_5_9_t1_lst)} ) if r1_5_9_t1_lst else 0
+            rsdict.update( {'r2_10_13_t1_lst' : printout(r2_10_13_t1_lst)} ) if r2_10_13_t1_lst else 0
+            rsdict.update( {'r3_6_14_t1_lst' : printout(r3_6_14_t1_lst)} ) if r3_6_14_t1_lst else 0
+            rsdict.update( {'r4_7_11_t1_lst' : printout(r4_7_11_t1_lst)} ) if r4_7_11_t1_lst else 0
+            rsdict.update( {'r8_12_15_t1_lst' : printout(r8_12_15_t1_lst)} ) if r8_12_15_t1_lst else 0
+            rsdict.update( {'r16_t1_lst' : printout(r16_t1_lst)} ) if r16_t1_lst else 0
 
-            r1_2_3_lst = printout(r1_2_3_lst) if r1_2_3_lst else 0
-            r4_5_6_lst = printout(r4_5_6_lst) if r4_5_6_lst else 0
-            r7_8_9_lst = printout(r7_8_9_lst) if r7_8_9_lst else 0
-            r10_11_12_lst = printout(r10_11_12_lst) if r10_11_12_lst else 0
-            r13_14_15_lst = printout(r13_14_15_lst) if r13_14_15_lst else 0
-            r16_lst = printout(r16_lst) if r16_lst else 0
-            r1_5_9_t1_lst = printout(r1_5_9_t1_lst) if r1_5_9_t1_lst else 0
-            r2_10_13_t1_lst = printout(r2_10_13_t1_lst) if r2_10_13_t1_lst else 0
-            r3_6_14_t1_lst = printout(r3_6_14_t1_lst) if r3_6_14_t1_lst else 0
-            r4_7_11_t1_lst = printout(r4_7_11_t1_lst) if r4_7_11_t1_lst else 0
-            r8_12_15_t1_lst = printout(r8_12_15_t1_lst) if r8_12_15_t1_lst else 0
-            r16_t1_lst = printout(r16_t1_lst) if r16_t1_lst else 0
-            return render(request, 'campaigngenerator/viewsplitter.html', {'locals':locals()})
+            return render(request, 'campaigngenerator/viewsplitter.html', {'rsdict':rsdict,'reg':reg,'blockers':blockers})
         else:
             return render(request, 'campaigngenerator/nhschecker.html')
 
-@login_required
+def merge(data):
+    data = [y for y in [x.split('-') for x in data]]
+    for col in range(len(data[0]) -1,-1,-1):
+        result = []
+        def add_result():
+            result.append([])
+            if headstr:
+                result[-1] += headstr.split('-')
+            if len(list(findnum)) > 1:
+                result[-1] += [f'{findstr}({"|".join(sorted(findnum))})']
+            elif len(list(findnum)) == 1:
+                result[-1] += [f'{findstr}{findnum[0]}']
+            if tailstr:
+                result[-1] += tailstr.split('-')
+        _headstr = lambda x, y: '-'.join(x[:y])
+        _tailstr = lambda x, y: '-'.join(x[y + 1:])
+        _findstr = lambda x: re.findall('(\D+)', x)[0] if re.findall('(\D+)', x) else ''
+        _findnum = lambda x: re.findall('(\d+)', x)[0] if re.findall('(\d+)', x) else ''
+        headstr = _headstr(data[0], col)
+        tailstr = _tailstr(data[0], col)
+        findstr = _findstr(data[0][col])
+        findnum = []
+        for row in data:
+            if headstr + findstr + tailstr != _headstr(row, col) + _findstr(row[col]) + _tailstr(row, col):
+              add_result()
+              headstr = _headstr(row, col)
+              tailstr = _tailstr(row, col)
+              findstr = _findstr(row[col])
+              findnum = []
+            if _findnum(row[col]) not in findnum:
+              findnum.append(_findnum(row[col]))
+        else:
+            add_result()
+        data = result[:]
+    return ['-'.join(x) for x in result]
+
 def campaigncreator(request):
     #form = Campaigns()
     if request.method == 'GET':
@@ -184,45 +206,45 @@ def campaigncreator(request):
         form = CampaignCeatorForm(request.POST)
         if request.POST['devices']:
             data = inputformat(request)
-            for col in range(len(data[0]) -1,-1,-1):
-                result = []
-                def add_result():
-                    result.append([])
-                    if headstr:
-                        result[-1] += headstr.split('-')
-                    if len(list(findnum)) > 1:
-                        result[-1] += [f'{findstr}({"|".join(sorted(findnum))})']
-                    elif len(list(findnum)) == 1:
-                        result[-1] += [f'{findstr}{findnum[0]}']
-                    if tailstr:
-                        result[-1] += tailstr.split('-')
-                _headstr = lambda x, y: '-'.join(x[:y])
-                _tailstr = lambda x, y: '-'.join(x[y + 1:])
-                _findstr = lambda x: re.findall('(\D+)', x)[0] if re.findall('(\D+)', x) else ''
-                _findnum = lambda x: re.findall('(\d+)', x)[0] if re.findall('(\d+)', x) else ''
-                headstr = _headstr(data[0], col)
-                tailstr = _tailstr(data[0], col)
-                findstr = _findstr(data[0][col])
-                findnum = []
-                for row in data:
-                    if headstr + findstr + tailstr != _headstr(row, col) + _findstr(row[col]) + _tailstr(row, col):
-                      add_result()
-                      headstr = _headstr(row, col)
-                      tailstr = _tailstr(row, col)
-                      findstr = _findstr(row[col])
-                      findnum = []
-                    if _findnum(row[col]) not in findnum:
-                      findnum.append(_findnum(row[col]))
-                else:
-                    add_result()
-                data = result[:]
-                devices = "|".join(['-'.join(x) for x in result])
-            reg = devices[0].split("-c1-")[0]
+            data = ['-'.join(x) for x in data]
+            reg = re.split('-c1-|-e1-',data[0])[0]
             blockers = Blocker.objects.filter(datecompleted__isnull=True)
-            return render(request, 'campaigngenerator/viewcampaigns.html', {'devices':devices, 'blockers':blockers, 'reg':reg})
+            t1data = [element for element in data if "-t1-r" in element]
+            t2data = [element for element in  data if "-t2-r" in element]
+            spinedata = [element for element in data if "-c1-s" in element]
+            mixingt1_s_error = ''
+            create = ''
+            if spinedata:
+                spinedata = '|'.join(map(str,merge(spinedata)))
+            if t2data:
+                t2data = '|'.join(map(str,merge(t2data)))
+            if t1data:
+                t1data = '|'.join(map(str,merge(t1data)))
+            deadline = date.today() + timedelta(days=4)
+            if t2data and spinedata:
+                alldevices = t2data + "|" + spinedata
+                if t1data:
+                    alldevices = t1data + "|" + alldevices
+                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+            elif spinedata and not t2data and not t1data:
+                alldevices = spinedata
+                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-spine-row-based-deployment --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+            elif t2data and t1data and not spinedata:
+                alldevices = t2data + "|" + t1data
+                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+            elif t1data and not spinedata:
+                alldevices = t1data
+                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+            elif t2data and not spinedata:
+                alldevices = t2data
+                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+            elif t1data and spinedata and not t2data:
+                mixingt1_s_error = 'ERROR!, Mixing T1s and Spines will result in spines only deployment which will be rejected, please split it into two campaigns'
+            elif create =='':
+                return render(request, 'campaigngenerator/campaigncreator.html',{'errorbadformat':'ERROR! Please enter valid device name format'})
+            return render(request, 'campaigngenerator/viewcampaigns.html', {'mixingt1_s_error':mixingt1_s_error,'create':create,'reg':reg,'blockers':blockers})
         else:
             return render(request, 'campaigngenerator/campaigncreator.html')
-
 def allcampaigns(request):
     campaigns = Campaigns.objects.all()
     return render(request, 'campaigngenerator/allcampaigns.html', {'campaigns':campaigns})

@@ -5,14 +5,14 @@
 {% block content %}
 
 <h1> Health Checker</h1>
-
+<h4> Check if:<br> -Device is up and Operational <br> -Eth0 is up and IPv4 is assigned <br> -NSM DIFF</h4>
 <form method='POST' action="{% url 'healthchecker' %}">
   {% csrf_token %}
   {{ form.as_p }}
 
-  <textarea name = "devices" cols="140" rows="15"></textarea>
+  <textarea name = "devices" cols="139" rows="15"></textarea>
   <br />
-  <div align="center"><input type="submit" value="Get Command!" /></div>
+  <div style="padding-right:320px" align="right"><input type="submit" value="Get Command!" /></div>
   </form>
 
 {% endblock %}

@@ -1,24 +1,185 @@
-{% if user.is_authenticated %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deployability Project</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+  body  {
+            padding: 0;
+            margin: 0;
+        }
+        {
+        font-family: "Lato", sans-serif;
+      }
+  li a.nav-link {
+   color: white;
+   font-size: 24px;
+   padding: 0;
+   line-height: 50px;
+  }
+  nav div ul li a.nav-link:hover {
+      background-color: #004d40;
+  }
+  .fixed-top{
+      height: 60px;
+  }
 
-Logged In as {{ user.username }}
+/* Fixed sidenav, full height */
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 65px;
+}
 
-<a href="{% url 'createblocker' %}">Create a new blocker</a>
-<a href="{% url 'currentblockers' %}">Active Blockers</a>
-<a href="{% url 'completedblockers' %}">Completed Blockers</a>
-<a href="{% url 'allblockers' %}">All Blockers</a>
+/* Style the sidenav links and the dropdown button */
+.sidenav a, .dropdown-btn {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
 
-<form action="{% url 'logoutuser' %}" method ="POST">
-  {% csrf_token %}
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+  color: #f1f1f1;
+}
 
- <button type="submit">Logout</button>
-</form>
+/* Main content */
+.main {
+  margin-left: 200px; /* Same as the width of the sidenav */
+  font-size: 20px; /* Increased text to enable scrolling */
+  padding: 70px 60px;
+}
 
-{% else %}
+/* Add an active class to the active dropdown button */
+.active {
+  background-color: green;
+  color: white;
+}
 
-<a href="{% url 'signupuser' %}">Sign Up</a>
-<a href="{% url 'loginuser' %}">Login</a>
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+  display: none;
+  background-color: #262626;
+  padding-left: 8px;
+}
 
-{% endif %}
-<br>
-<br>
-{% block content %} {% endblock%}
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+/* Some media queries for responsiveness */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+  <div>
+  <nav class="navbar fixed-top navbar-expand-lg py-0 bg-warning">
+  <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+          <span style="font-size:26px;">Deployability Project</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+
+      <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+                  <li class="nav-item">
+                      <a href="#" onclick="$('#signOutBtn').click()" class="nav-link">Logout</a>
+                      <form style='display: none;' method="POST" action="{% url 'logoutuser' %}">
+                          {% csrf_token %}
+                          <button id="signOutBtn" type="submit">Logout</button>
+                      </form>
+                  </li>
+              {% else %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'signupuser' %}">Sign Up</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'loginuser' %}">Login</a>
+                  </li>
+              {% endif %}
+          </ul>
+      </div>
+  </div>
+  </nav>
+  </div>
+
+<div class="content">
+<div class="sidenav">
+  <a href="#ProjectSummary">Project Summary</a>
+  <a href="#Dashboard">Dashboard</a>
+  <button class="dropdown-btn">Checkers
+    <i class="fa fa-caret-down"></i>
+  </button>
+  <div class="dropdown-container">
+    <a href="{% url 'healthchecker' %}">Device Healthy?</a>
+    <a href="{% url 'nhschecker' %}">NHS Querier</a>
+    <a href="{% url 'campaigncreator' %}">Create Campaign</a>
+  </div>
+  <button class="dropdown-btn">Project Blocker
+    <i class="fa fa-caret-down"></i>
+  </button>
+  <div class="dropdown-container">
+    <a href="{% url 'createblocker' %}">Create blocker</a>
+    <a href="{% url 'currentblockers' %}">Active Blockers</a>
+    <a href="{% url 'completedblockers' %}">Closed Blockers</a>
+    <a href="{% url 'allblockers' %}">All Blockers</a>
+  </div>
+    <a href="#KnownProblems">Known Problems</a>
+
+  <a href="#contact">Search</a>
+</div>
+
+<script>
+/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+  this.classList.toggle("active");
+  var dropdownContent = this.nextElementSibling;
+  if (dropdownContent.style.display === "block") {
+  dropdownContent.style.display = "none";
+  } else {
+  dropdownContent.style.display = "block";
+  }
+  });
+}
+</script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+<div class="main">
+  {% block content %}{% endblock %}
+</div>

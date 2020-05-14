@@ -13,10 +13,10 @@
 }
 
 .tooltip .tooltiptext {
-  visibility: hidden;
+  visibility: visible;
   width: 140px;
-  background-color: #555;
-  color: #fff;
+  background-color: coral;
+  color: coral;
   text-align: center;
   border-radius: 6px;
   padding: 5px;
@@ -37,7 +37,7 @@
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: coral;
 }
 
 .tooltip:hover .tooltiptext {
@@ -54,15 +54,14 @@
 </head>
 
 <body>
-Health Checker Command
+<h1>Health Checker Command</h1>
 <br>
+<h5>{{length}}</h5>
 <br>
 
-<textarea id="myInput" rows="35" cols="155">test {{ devices }} test2</textarea>
-
-<div class="tooltip">
-<button onclick="myFunction()" onmouseout="outFunc()">
-  <span class="tooltiptext" id="myTooltip">Copy to clipboard</span>
+<textarea id="myInput" rows="10" cols="155"> {{ command }} </textarea>
+<div class="js-copytextarea" readonly="readonly">
+<button onclick="myFunction()">
   Copy Command
   </button>
 </div>
@@ -70,22 +69,12 @@ Health Checker Command
 <!-- The button used to copy the text -->
 <script>
 function myFunction() {
-  var copyText = document.getElementById("myInput");
-  copyText.select();
-  copyText.setSelectionRange(0, 99999)
-  document.execCommand("copy");
+  document.querySelector("textarea").select();
+  document.execCommand('copy');
+  }
 
-  var tooltip = document.getElementById("myTooltip");
-  tooltip.innerHTML = "Copied";
-}
 
-function outFunc() {
-  var tooltip = document.getElementById("myTooltip");
-  tooltip.innerHTML = "Copy to clipboard";
-}
 </script>
 </body>
-
-
 
 {% endblock %}
