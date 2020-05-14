@@ -4,8 +4,10 @@
 
 {% block content %}
 
-<h1> Template Splitter</h1>
-<h2> Group devices as per Hercules Template for NHS QUERY</h2>
+<h1> NHS Checker</h1>
+<br>
+<h5> Grouping devices as per Hercules deployment template</h5>
+<br>
 
 <form method='POST' action="{% url 'nhschecker' %}">
   {% csrf_token %}

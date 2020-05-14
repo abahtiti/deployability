@@ -89,7 +89,7 @@ class HealthCheckerApi(APIView):
 # Splitter Template
 def splitastemplateview(request):
     if request.method == 'GET':
-        return render(request, 'campaigngenerator/splitter.html')
+        return render(request, 'campaigngenerator/nhschecker.html')
     else:
         devices = inputformat(request)
         if devices != []:
@@ -158,7 +158,7 @@ def splitastemplateview(request):
             rsdict.update( {'r8_12_15_t1_lst' : printout(r8_12_15_t1_lst)} ) if r8_12_15_t1_lst else 0
             rsdict.update( {'r16_t1_lst' : printout(r16_t1_lst)} ) if r16_t1_lst else 0
 
-            return render(request, 'campaigngenerator/viewsplitter.html', {'rsdict':rsdict,'reg':reg,'blockers':blockers})
+            return render(request, 'campaigngenerator/viewnhschecker.html', {'rsdict':rsdict,'reg':reg,'blockers':blockers})
         else:
             return render(request, 'campaigngenerator/nhschecker.html')
 
