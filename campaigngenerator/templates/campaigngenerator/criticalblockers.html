@@ -1,0 +1,20 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+Critical Blockers
+
+<ul>
+  {% for blocker in blockers %}
+  <li>
+    <a href="{% url 'viewblocker' blocker.id %}">
+    {{ blocker.title }} due date was
+    {{ blocker.duedate |date:'M j Y' }}
+    </a>
+  </li>
+  {% endfor %}
+  {% endif %}
+</ul>
+
+{% endblock %}

@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Blocker
-from .models import Campaigns
+from .models import Blocker,Campaigns,KnownProblems
 
 class HomeForm(forms.Form):
     post = forms.CharField(label="post", max_length=200, widget=forms.Textarea)
@@ -13,10 +12,19 @@ class HomeForm(forms.Form):
         return [None, None]
         print(value)
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class BlockerForm(ModelForm):
     class Meta:
         model = Blocker
-        fields = ['title','body','important']
+        widgets = {'duedate': DateInput()}
+        fields = ['title','body','duedate','important']
+
+class KnownProblemsForm(ModelForm):
+    class Meta:
+        model = KnownProblems
+        fields = ['title','body']
 
 #class CampaignCeatorForm(forms.Form):
 class CampaignCeatorForm(ModelForm):

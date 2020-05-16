@@ -8,7 +8,7 @@ from campaigngenerator import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    #path('count/', views.count, name='count'),
+    path('summary/', views.summary, name='summary'),
 
     # Auth
     path('signup/', views.signupuser, name='signupuser'),
@@ -21,12 +21,20 @@ urlpatterns = [
     # Blocker
     path('create/', views.createblocker, name='createblocker'),
     path('current/', views.currentblockers, name='currentblockers'),
+    path('criticalblockers/', views.criticalblockers, name='criticalblockers'),
     path('allblockers/', views.allblockers, name='allblockers'),
     path('completed/', views.completedblockers, name='completedblockers'),
     path('blocker/<int:blocker_pk>', views.viewblocker, name='viewblocker'),
     path('blocker/<int:blocker_pk>/complete', views.completeblocker, name='completeblocker'),
     path('blocker/<int:blocker_pk>/notcomplete', views.notcompleteblocker, name='notcompleteblocker'),
     path('blocker/<int:blocker_pk>/delete', views.deleteblocker, name='deleteblocker'),
+
+    # Known Problems
+    path('createkp/', views.createkp, name='createkp'),
+    path('allkp/', views.allkp, name='allkp'),
+    path('kp/<int:kp_pk>', views.viewkp, name='viewkp'),
+    path('kp/<int:kp_pk>/delete', views.deletekp, name='deletekp'),
+
 
     # Campaigns
     path('campaigncreator/', views.campaigncreator, name='campaigncreator'),
@@ -36,8 +44,11 @@ urlpatterns = [
     # Health Checker view
     path('healthchecker/', views.healthcheckerview, name='healthchecker'),
 
-    # splitter view
+    # nhschecker view
     path('nhschecker/', views.splitastemplateview, name='nhschecker'),
+
+    # search
+    path('search/', views.search, name='search'),
 
 
     # API View

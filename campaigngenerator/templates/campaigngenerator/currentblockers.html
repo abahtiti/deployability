@@ -4,12 +4,15 @@
 {% if user.is_authenticated %}
 
 Active Blockers
-
 <ul>
   {% for blocker in blockers %}
   <li>
     <a href="{% url 'viewblocker' blocker.id %}">
+    {% if  blocker.duedate|date:"mdY" < today|date:"mdY" %}
+     <p style="color:red;"> {{ blocker.title }} - {{ blocker.duedate }}</p>
+    {% else %}
     {{ blocker.title }}
+    {% endif %}
     </a>
   </li>
   {% endfor %}
@@ -19,6 +22,11 @@ Active Blockers
 <form method="GET" action="{% url 'allblockers' %}">
   {% csrf_token %}
 <button type="submit">Show All Blockers</button>
+</form>
+
+<form method="GET" action="{% url 'criticalblockers' %}">
+  {% csrf_token %}
+<button type="submit">Show criticalblockers</button>
 </form>
 
 {% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+All Known Problems
+
+<ul>
+  {% for kp in kps %}
+  <li>
+    <a href="{% url 'viewkp' kp.id %}">
+    {{ kp.title }}
+    </a>
+  </li>
+  {% endfor %}
+  {% endif %}
+</ul>
+
+{% endblock %}

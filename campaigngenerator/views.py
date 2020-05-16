@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .forms import HomeForm,BlockerForm,CampaignCeatorForm,HealthCheckerForm
+from .forms import HomeForm,BlockerForm,CampaignCeatorForm,HealthCheckerForm,KnownProblemsForm
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-from .models import Blocker,Campaigns
+from django.db.models import Q
+from .models import Blocker,Campaigns,KnownProblems
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from campaigngenerator import serializers
@@ -27,6 +28,10 @@ import re
 def home(request):
     form = HomeForm()
     return render(request, 'campaigngenerator/home.html', {'form':form})
+
+def summary(request):
+    if request.method == 'GET':
+        return render(request, 'campaigngenerator/summary.html')
 
 # Prepare Input Data format
 def inputformat(request):
@@ -246,6 +251,15 @@ def campaigncreator(request):
             return render(request, 'campaigngenerator/viewcampaigns.html', {'create':create,'reg':reg,'blockers':blockers})
         else:
             return render(request, 'campaigngenerator/campaigncreator.html')
+
+def submitcampaign(request):
+    campaign = request.POST['hid']
+    if "http" in campaign:
+        campaign_id = campaign.split("campaign/")[-1]
+    else:
+        return render(request,'campaigngenerator/viewcampaigns.html',{'errorformat':'ERROR!Please enter a valid URL'})
+    return render(request,'campaigngenerator/viewcampaigns.html',{'hid':campaign_id})
+
 def allcampaigns(request):
     campaigns = Campaigns.objects.all()
     return render(request, 'campaigngenerator/allcampaigns.html', {'campaigns':campaigns})
@@ -276,7 +290,7 @@ def loginuser(request):
             return render(request, 'campaigngenerator/loginuser.html', {'form':AuthenticationForm(), 'error':'Username and password did NOT match'})
         else:
             login(request, user)
-            return redirect('currentblockers')
+            return redirect('dashboard')
 
 @login_required
 def logoutuser(request):
@@ -299,9 +313,15 @@ def createblocker(request):
             return render(request, 'campaigngenerator/createblocker.html', {'form':BlockerForm(),'error':'BAD data passed in. Try again'})
 
 @login_required
+def criticalblockers(request):
+    blockers = Blocker.objects.filter(duedate__lte=timezone.now().date(),datecompleted__isnull=True)
+    return render(request, 'campaigngenerator/criticalblockers.html', {'blockers':blockers})
+
+@login_required
 def currentblockers(request):
-    blockers = Blocker.objects.filter(datecompleted__isnull=True)
-    return render(request, 'campaigngenerator/currentblockers.html', {'blockers':blockers})
+    blockers = Blocker.objects.filter(datecompleted__isnull=True).order_by('duedate')
+    today = timezone.now()
+    return render(request, 'campaigngenerator/currentblockers.html', {'blockers':blockers,'today':today})
 
 @login_required
 def completedblockers(request):
@@ -351,23 +371,71 @@ def deleteblocker(request, blocker_pk):
         blocker.delete()
         return redirect('currentblockers')
 
+@login_required
+def createkp(request):
+    if request.method == 'GET':
+        return render(request, 'campaigngenerator/createkp.html', {'form':KnownProblemsForm()})
+    else:
+        try:
+            form = KnownProblemsForm(request.POST)
+            newkp = form.save(commit=False)
+            newkp.user = request.user
+            newkp.save()
+            return redirect('allkp')
+        except ValueError:
+            return render(request, 'campaigngenerator/createkp.html', {'form':KnownProblemsForm(),'error':'BAD data passed in. Try again'})
+
+@login_required
+def deletekp(request, kp_pk):
+    kp = get_object_or_404(KnownProblems, pk=kp_pk)
+    if request.method == 'POST':
+        kp.delete()
+        return redirect('allkp')
+
+@login_required
+def allkp(request):
+    #if request.method == 'POST':
+    kps = KnownProblems.objects.all()
+    return render(request, 'campaigngenerator/allkp.html', {'kps':kps})
+
+@login_required
+def viewkp(request, kp_pk):
+    kp = get_object_or_404(KnownProblems, pk=kp_pk)
+    if request.method == 'GET':
+        form = KnownProblemsForm(instance=kp)
+        return render(request, 'campaigngenerator/viewkp.html', {'kp':kp, 'form':form})
+    else:
+        try:
+            form = KnownProblemsForm(request.POST, instance=kp)
+            form.save()
+            return redirect('allkp')
+        except ValueError:
+            return render(request, 'campaigngenerator/viewkp.html', {'kp':kp, 'form':form,'error':'BAD data passed in. Try again'})
+
 def dashboard(request):
     allblockers = int(Blocker.objects.all().count())
     closedblockers = int(Blocker.objects.filter(datecompleted__isnull=False).count())
     activeblockers = int(Blocker.objects.filter(datecompleted__isnull=True).count())
+    criticalblcokers = int(Blocker.objects.filter(duedate__lte=timezone.now().date(),datecompleted__isnull=True).count())
     if not activeblockers:
         activeblockers = 0
-    varA = ['All Blockers', 'Active Blockers','Closed Blockers']
-    varB = [allblockers,activeblockers,closedblockers]
-    context = {'test':'test','varA':varA,'varB':varB}
+    if not criticalblcokers:
+        criticalblcokers = 0
+    if not closedblockers:
+        closedblockers = 0
+    varA = ['Critical Blockers', 'Active Blockers','Closed Blockers']
+    varB = [criticalblcokers,activeblockers,closedblockers]
+    context = {'varA':varA,'varB':varB}
     return render(request,'campaigngenerator/dashboard.html',context)
 
-def submitcampaign(request):
-    campaign = request.POST['hid']
-    if "http" in campaign:
-        campaign_id = campaign.split("campaign/")[-1]
-        #campaign_id = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign approve -c {} -a neteng-l1-approver -m "Looks good to me."'.format(campaign_id)
+def search(request):
+    search_term = ''
+    if 'search' in request.GET:
+        search_term = request.GET['search']
+        if search_term != '':
+            blockers = Blocker.objects.all().filter(title__icontains=search_term)
+            kps = KnownProblems.objects.all().filter(title__icontains=search_term)
+            return render(request, 'campaigngenerator/search.html', {'kps':kps,'blockers' : blockers})
 
-    else:
-        return render(request,'campaigngenerator/viewcampaigns.html',{'errorformat':'ERROR!Please enter a valid URL'})
-    return render(request,'campaigngenerator/viewcampaigns.html',{'hid':campaign_id})
+    return render(request, 'campaigngenerator/search.html')
+    #blockers = None

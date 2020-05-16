@@ -7,11 +7,9 @@
 
 <body>
 
-{{varA}}
-{{varB}}
+  <h1>Blocker Statistics</h1>
 
   <canvas id="myChart"></canvas>
-  <h1>Hello World</h1>
 
 </body>
 
@@ -26,7 +24,7 @@
         labels: {{varA|safe}},
         datasets: [{
             label: 'My First dataset',
-            backgroundColor:["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+            backgroundColor:["rgb(255, 0, 0)","rgb(54, 162, 235)","rgb(50,205,50)"],
             borderColor: 'rgb(120, 20, 20)',
             data: {{varB|safe}}
         }]
