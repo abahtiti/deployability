@@ -3,12 +3,13 @@
 {% block content %}
 {% if user.is_authenticated %}
 
+
 Active Blockers
 <ul>
   {% for blocker in blockers %}
   <li>
     <a href="{% url 'viewblocker' blocker.id %}">
-    {% if  blocker.duedate|date:"mdY" < today|date:"mdY" %}
+    {% if  blocker.duedate != None and blocker.duedate|date:"mdY" < today|date:"mdY" %}
      <p style="color:red;"> {{ blocker.title }} - {{ blocker.duedate }}</p>
     {% else %}
     {{ blocker.title }}
