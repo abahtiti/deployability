@@ -1,0 +1,40 @@
+{% extends 'campaigngenerator/base.html' %}
+
+{% block content %}
+
+<html>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+<body>
+
+{{varA}}
+{{varB}}
+
+  <canvas id="myChart"></canvas>
+  <h1>Hello World</h1>
+
+</body>
+
+<script>
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'pie',
+
+    // The data for our dataset
+    data: {
+        labels: {{varA|safe}},
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor:["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+            borderColor: 'rgb(120, 20, 20)',
+            data: {{varB|safe}}
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+</script>
+
+{% endblock content %}

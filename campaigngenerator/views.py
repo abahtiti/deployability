@@ -240,9 +240,10 @@ def campaigncreator(request):
                 create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
             elif t1data and spinedata and not t2data:
                 mixingt1_s_error = 'ERROR!, Mixing T1s and Spines will result in spines only deployment which will be rejected, please split it into two campaigns'
+                return render(request, 'campaigngenerator/campaigncreator.html', {'mixingt1_s_error':mixingt1_s_error})
             elif create =='':
                 return render(request, 'campaigngenerator/campaigncreator.html',{'errorbadformat':'ERROR! Please enter valid device name format'})
-            return render(request, 'campaigngenerator/viewcampaigns.html', {'mixingt1_s_error':mixingt1_s_error,'create':create,'reg':reg,'blockers':blockers})
+            return render(request, 'campaigngenerator/viewcampaigns.html', {'create':create,'reg':reg,'blockers':blockers})
         else:
             return render(request, 'campaigngenerator/campaigncreator.html')
 def allcampaigns(request):
@@ -349,3 +350,24 @@ def deleteblocker(request, blocker_pk):
     if request.method == 'POST':
         blocker.delete()
         return redirect('currentblockers')
+
+def dashboard(request):
+    allblockers = int(Blocker.objects.all().count())
+    closedblockers = int(Blocker.objects.filter(datecompleted__isnull=False).count())
+    activeblockers = int(Blocker.objects.filter(datecompleted__isnull=True).count())
+    if not activeblockers:
+        activeblockers = 0
+    varA = ['All Blockers', 'Active Blockers','Closed Blockers']
+    varB = [allblockers,activeblockers,closedblockers]
+    context = {'test':'test','varA':varA,'varB':varB}
+    return render(request,'campaigngenerator/dashboard.html',context)
+
+def submitcampaign(request):
+    campaign = request.POST['hid']
+    if "http" in campaign:
+        campaign_id = campaign.split("campaign/")[-1]
+        #campaign_id = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign approve -c {} -a neteng-l1-approver -m "Looks good to me."'.format(campaign_id)
+
+    else:
+        return render(request,'campaigngenerator/viewcampaigns.html',{'errorformat':'ERROR!Please enter a valid URL'})
+    return render(request,'campaigngenerator/viewcampaigns.html',{'hid':campaign_id})

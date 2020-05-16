@@ -7,6 +7,7 @@
 <h1> Campaign Generator</h1>
 
 <p style="color:red"> {{ errorbadformat }}</p>
+<p style="color:red"> {{ mixingt1_s_error }}</p>
 <form method='POST' action="{% url 'campaigncreator' %}">
   {% csrf_token %}
   {{ form.as_p }}

@@ -14,6 +14,10 @@ urlpatterns = [
     path('signup/', views.signupuser, name='signupuser'),
     path('login/', views.loginuser, name='loginuser'),
     path('logout/', views.logoutuser, name='logoutuser'),
+
+    # dashboard
+    path('dashboard/', views.dashboard, name='dashboard'),
+
     # Blocker
     path('create/', views.createblocker, name='createblocker'),
     path('current/', views.currentblockers, name='currentblockers'),
@@ -26,7 +30,8 @@ urlpatterns = [
 
     # Campaigns
     path('campaigncreator/', views.campaigncreator, name='campaigncreator'),
-    path('allcampaigns/', views.allcampaigns, name='allcampaigns'),
+    path('submitcampaign/', views.submitcampaign, name='submitcampaign'),
+    #path('allcampaigns/', views.allcampaigns, name='allcampaigns'),
 
     # Health Checker view
     path('healthchecker/', views.healthcheckerview, name='healthchecker'),

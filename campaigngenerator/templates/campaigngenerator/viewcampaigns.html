@@ -9,16 +9,6 @@
 <br>
 <br>
 
-<p style="color:red">{{ mixingt1_s_error }}</p>
-
-<textarea id="myInput" readonly="readonly" rows="10" cols="155"> {{ create }}
-</textarea>
-
-<div class="js-copytextarea" readonly="readonly">
-<button onclick="myFunction()" onmouseout="outFunc()">
-  Copy Command
-  </button>
-</div>
 
 <!-- The button used to copy the text -->
 <script>
@@ -28,6 +18,41 @@ function myFunction() {
 }
 
 </script>
+
+<br>
+<br>
+{% if hid != null %}
+
+/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign approve -c {{ hid }}-a neteng-l1-approver -m "Looks good to me."
+<br>
+<br>
+/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign submit -c {{ hid }}
+
+{% else %}
+<p style="color:red">{{ mixingt1_s_error }}</p>
+<textarea id="myInput" readonly="readonly" rows="10" cols="155"> {{ create }}
+</textarea>
+
+<div class="js-copytextarea" readonly="readonly">
+<button onclick="myFunction()" onmouseout="outFunc()">
+  Copy Command
+  </button>
+</div>
+
+<br>
+Please enter hercules link to generate approval/submit command
+<br>
+{{ errorformat }}
+<p style="color:red"> {{ errorbadformat }}</p>
+<form method='POST' action="{% url 'submitcampaign' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <textarea name = "hid" cols="139" rows="6"> </textarea>
+  <br />
+
+  <div style="padding-right:320px" align="right"><input type="submit" value="Get Commands!"/></div>
+  </form>
+{% endif %}
 </body>
 
-{% endblock %}
+{% endblock content %}
