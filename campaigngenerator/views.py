@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .forms import BlockerForm,CampaignCeatorForm,HealthCheckerForm,KnownProblemsForm
-#from .forms import HomeForm
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-from django.db.models import Q
 from .models import Blocker,Campaigns,KnownProblems
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -82,11 +80,11 @@ class HealthCheckerApi(APIView):
             devices = serializer.validated_data.get('devices')
             devices = inputformat(request)
             devices = '|'.join(['-'.join(x) for x in devices])
-            command = f'test {devices} test'
+            command = f'./check_port -p {devices}'
             return Response({'Command': command})
 
-# Splitter is to split devices as per predefined template,row/columun
-# Splitter Template
+# nhschecker is to split devices as per predefined template,row/columun
+# nhschecker Template
 @login_required
 def splitastemplateview(request):
     if request.method == 'GET':
