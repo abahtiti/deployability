@@ -264,19 +264,21 @@ def allcampaigns(request):
 
 def signupuser(request):
     if request.method == 'GET':
-        return render(request, 'campaigngenerator/signupuser.html', {'form':UserCreationForm()})
-    else:
-        # Create a new user
-        if request.POST['password1'] == request.POST['password2']:
-            try:
-                user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
-                user.save()
-                login(request, user)
-                return redirect('currentblockers')
-            except IntegrityError:
-                return render(request, 'campaigngenerator/signupuser.html', {'form':UserCreationForm(), 'error':'That username has already been taken. Please choose different username'})
-        else:
-            return render(request, 'campaigngenerator/signupuser.html', {'form':UserCreationForm(), 'error':'Passwords did not match'})
+        return render(request, 'campaigngenerator/signupuserdisable.html')
+        # Please enable the below code and remove the previous line if you need signupuser
+    #     return render(request, 'campaigngenerator/signupuser.html', {'form':UserCreationForm()})
+    # else:
+    #     # Create a new user
+    #     if request.POST['password1'] == request.POST['password2']:
+    #         try:
+    #             user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
+    #             user.save()
+    #             login(request, user)
+    #             return redirect('summary')
+    #         except IntegrityError:
+    #             return render(request, 'campaigngenerator/signupuser.html', {'form':UserCreationForm(), 'error':'That username has already been taken. Please choose different username'})
+    #     else:
+    #         return render(request, 'campaigngenerator/signupuser.html', {'form':UserCreationForm(), 'error':'Passwords did not match'})
 
 def loginuser(request):
     if request.method == 'GET':
