@@ -2,15 +2,15 @@ from django import forms
 from django.forms import ModelForm
 from .models import Blocker,Campaigns,KnownProblems
 
-class HomeForm(forms.Form):
-    post = forms.CharField(label="post", max_length=200, widget=forms.Textarea)
+#class HomeForm(forms.Form):
+#    post = forms.CharField(label="post", max_length=200, widget=forms.Textarea)
     #check = forms.BooleanField()
 
-    def decompress(self,value):
-        if value:
-            return value.split('')
-        return [None, None]
-        print(value)
+#    def decompress(self,value):
+#        if value:
+#            return value.split('')
+#        return [None, None]
+#        print(value)
 
 class DateInput(forms.DateInput):
     input_type = 'date'

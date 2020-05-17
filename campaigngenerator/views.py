@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .forms import HomeForm,BlockerForm,CampaignCeatorForm,HealthCheckerForm,KnownProblemsForm
+from .forms import BlockerForm,CampaignCeatorForm,HealthCheckerForm,KnownProblemsForm
+#from .forms import HomeForm
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -16,19 +17,12 @@ from rest_framework.response import Response
 from datetime import timedelta, date, datetime
 import re
 
-#class HomeView(TemplateView):
-#    template_name = 'campaigngenerator/home.html'
-
-#    def get(self, request):
-#        form = HomeForm()
-#        return render(request, self.template_name, {'form': form})
-
-
-
+@login_required
 def home(request):
-    form = HomeForm()
-    return render(request, 'campaigngenerator/home.html', {'form':form})
+    #return render(request, 'campaigngenerator/home.html')
+    return redirect('dashboard')
 
+@login_required
 def summary(request):
     if request.method == 'GET':
         return render(request, 'campaigngenerator/summary.html')
@@ -50,6 +44,7 @@ def inputformat(request):
 
 # Health Checker is to check device management eth0, NSM_DIFF, device status(down/shifted)
 # Health Checker Template
+@login_required
 def healthcheckerview(request):
     if request.method == 'GET':
         return render(request, 'campaigngenerator/healthchecker.html')
@@ -92,6 +87,7 @@ class HealthCheckerApi(APIView):
 
 # Splitter is to split devices as per predefined template,row/columun
 # Splitter Template
+@login_required
 def splitastemplateview(request):
     if request.method == 'GET':
         return render(request, 'campaigngenerator/nhschecker.html')
@@ -203,6 +199,7 @@ def merge(data):
         data = result[:]
     return ['-'.join(x) for x in result]
 
+@login_required
 def campaigncreator(request):
     #form = Campaigns()
     if request.method == 'GET':
@@ -219,6 +216,7 @@ def campaigncreator(request):
             spinedata = [element for element in data if "-c1-s" in element]
             mixingt1_s_error = ''
             create = ''
+            template = ('columnar-3-column-1-row-batching','columnar-spine-row-based-deployment')
             if spinedata:
                 spinedata = '|'.join(map(str,merge(spinedata)))
             if t2data:
@@ -230,19 +228,19 @@ def campaigncreator(request):
                 alldevices = t2data + "|" + spinedata
                 if t1data:
                     alldevices = t1data + "|" + alldevices
-                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+                create = 'create -n "{}#name:/{}/" --deadline "{} 00:59" --template {} --tags {}-c1_Ad_Hoc p100_chase'.format(alldevices[0:3],alldevices,deadline,template[0],alldevices.split("-c1-")[0])
             elif spinedata and not t2data and not t1data:
                 alldevices = spinedata
-                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-spine-row-based-deployment --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+                create = 'create -n "{}#name:/{}/" --deadline "{} 00:59" --template {} --tags {}-c1_Ad_Hoc p100_chase'.format(alldevices[0:3],alldevices,deadline,template[1],alldevices.split("-c1-")[0])
             elif t2data and t1data and not spinedata:
                 alldevices = t2data + "|" + t1data
-                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+                create = 'create -n "{}#name:/{}/" --deadline "{} 00:59" --template {} --tags {}-c1_Ad_Hoc p100_chase'.format(alldevices[0:3],alldevices,deadline,template[0],alldevices.split("-c1-")[0])
             elif t1data and not spinedata:
                 alldevices = t1data
-                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+                create = 'create -n "{}#name:/{}/" --deadline "{} 00:59" --template {} --tags {}-c1_Ad_Hoc p100_chase'.format(alldevices[0:3],alldevices,deadline,template[0],alldevices.split("-c1-")[0])
             elif t2data and not spinedata:
                 alldevices = t2data
-                create = '/apollo/env/NetworkDeviceCampaignServiceCLI/bin/campaign-service campaign create -n "{}#name:/{}/" --deadline "{} 00:59" --template alfred-bfc-columnar-3-column-1-row-batching --tags {}-c1_DNO_CONTRACTORS p100_chase'.format(alldevices[0:3],alldevices,deadline,alldevices.split("-c1-")[0])
+                create = 'create -n "{}#name:/{}/" --deadline "{} 00:59" --template {} --tags {}-c1_Ad_Hoc p100_chase'.format(alldevices[0:3],alldevices,deadline,template[0],alldevices.split("-c1-")[0])
             elif t1data and spinedata and not t2data:
                 mixingt1_s_error = 'ERROR!, Mixing T1s and Spines will result in spines only deployment which will be rejected, please split it into two campaigns'
                 return render(request, 'campaigngenerator/campaigncreator.html', {'mixingt1_s_error':mixingt1_s_error})
@@ -252,6 +250,7 @@ def campaigncreator(request):
         else:
             return render(request, 'campaigngenerator/campaigncreator.html')
 
+@login_required
 def submitcampaign(request):
     campaign = request.POST['hid']
     if "http" in campaign:
@@ -260,6 +259,7 @@ def submitcampaign(request):
         return render(request,'campaigngenerator/viewcampaigns.html',{'errorformat':'ERROR!Please enter a valid URL'})
     return render(request,'campaigngenerator/viewcampaigns.html',{'hid':campaign_id})
 
+@login_required
 def allcampaigns(request):
     campaigns = Campaigns.objects.all()
     return render(request, 'campaigngenerator/allcampaigns.html', {'campaigns':campaigns})
@@ -412,11 +412,13 @@ def viewkp(request, kp_pk):
         except ValueError:
             return render(request, 'campaigngenerator/viewkp.html', {'kp':kp, 'form':form,'error':'BAD data passed in. Try again'})
 
+@login_required
 def dashboard(request):
     allblockers = int(Blocker.objects.all().count())
     closedblockers = int(Blocker.objects.filter(datecompleted__isnull=False).count())
     activeblockers = int(Blocker.objects.filter(datecompleted__isnull=True).count())
     criticalblcokers = int(Blocker.objects.filter(duedate__lte=timezone.now().date(),datecompleted__isnull=True).count())
+    activeblockers = activeblockers - criticalblcokers
     if not activeblockers:
         activeblockers = 0
     if not criticalblcokers:
@@ -425,9 +427,10 @@ def dashboard(request):
         closedblockers = 0
     varA = ['Critical Blockers', 'Active Blockers','Closed Blockers']
     varB = [criticalblcokers,activeblockers,closedblockers]
-    context = {'varA':varA,'varB':varB}
+    context = {'varA':varA,'varB':varB,'allblockers':allblockers}
     return render(request,'campaigngenerator/dashboard.html',context)
 
+@login_required
 def search(request):
     search_term = ''
     if 'search' in request.GET:
@@ -438,4 +441,3 @@ def search(request):
             return render(request, 'campaigngenerator/search.html', {'kps':kps,'blockers' : blockers})
 
     return render(request, 'campaigngenerator/search.html')
-    #blockers = None

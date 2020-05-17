@@ -1,5 +1,8 @@
 {% extends 'campaigngenerator/base.html' %}
 
 {% block content %}
-Home
+{% if user.is_authenticated %}
+This is the home page
+
+  {% endif %}
 {% endblock %}
