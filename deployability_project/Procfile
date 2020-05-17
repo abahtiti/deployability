@@ -1,0 +1,1 @@
+web: gunicorn deployability_project.wsgi --log-file -
