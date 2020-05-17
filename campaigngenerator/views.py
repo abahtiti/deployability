@@ -53,7 +53,7 @@ def healthcheckerview(request):
             devices = ['-'.join(x) for x in devices]
             length = 'Number of devices: {}'.format(len(devices))
             devices = '|'.join(devices)
-            command = './check_port -p "name:/{}/"'.format(devices)
+            command = './check_mgmtport_nsmdiff_devicedown.sh "name:/{}/"'.format(devices)
             return render(request, 'campaigngenerator/viewhealthchecker.html', {'command': command,'length':length})
         else:
             return render(request, 'campaigngenerator/healthchecker.html')
@@ -80,7 +80,7 @@ class HealthCheckerApi(APIView):
             devices = serializer.validated_data.get('devices')
             devices = inputformat(request)
             devices = '|'.join(['-'.join(x) for x in devices])
-            command = f'./check_port -p {devices}'
+            command = f'./check_mgmtport_nsmdiff_devicedown.sh {devices}'
             return Response({'Command': command})
 
 # nhschecker is to split devices as per predefined template,row/columun
@@ -142,7 +142,7 @@ def splitastemplateview(request):
                 elif re.search(r'\bt1-r16\b',device):
                     r16_t1_lst.append(device)
             def printout(group):
-                return("./nhs_deployable_group.py device_deployment --devices {} --operation concurrent_shift".format(",".join(group)))
+                return("./combined_nhs_query.sh {}".format(",".join(group)))
             rsdict = {}
             rsdict.update( {'r1_2_3_lst' : printout(r1_2_3_lst)} ) if r1_2_3_lst else 0
             rsdict.update( {'r4_5_6_lst' : printout(r4_5_6_lst)} ) if r4_5_6_lst else 0
@@ -156,7 +156,6 @@ def splitastemplateview(request):
             rsdict.update( {'r4_7_11_t1_lst' : printout(r4_7_11_t1_lst)} ) if r4_7_11_t1_lst else 0
             rsdict.update( {'r8_12_15_t1_lst' : printout(r8_12_15_t1_lst)} ) if r8_12_15_t1_lst else 0
             rsdict.update( {'r16_t1_lst' : printout(r16_t1_lst)} ) if r16_t1_lst else 0
-
             return render(request, 'campaigngenerator/viewnhschecker.html', {'rsdict':rsdict,'reg':reg,'blockers':blockers})
         else:
             return render(request, 'campaigngenerator/nhschecker.html')
