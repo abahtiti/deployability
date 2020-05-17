@@ -24,7 +24,7 @@ class BlockerForm(ModelForm):
 class KnownProblemsForm(ModelForm):
     class Meta:
         model = KnownProblems
-        fields = ['title','body']
+        fields = ['title','body','fix']
 
 #class CampaignCeatorForm(forms.Form):
 class CampaignCeatorForm(ModelForm):

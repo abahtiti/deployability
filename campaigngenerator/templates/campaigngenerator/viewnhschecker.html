@@ -55,19 +55,7 @@
 
 <body>
 <h1>NHS Checker Command</h1>
-{% for blocker in blockers %}
-{% if reg in blocker.title %}
-<br>
-<p style="color:red">Please check below blockers as it may affect your campaign:</p>
-<ul>
-  <li>
-    <a href="{% url 'viewblocker' blocker.id %}">
-       {{ blocker.title }}
-    </a>
-  </li>
-</ul>
-{% endif %}
-{% endfor %}
+
 <br>
 {% for key,value in rsdict.items %}
 {% if key != 'request' and key != 'devices' and key != 'device' and Key != 'Blocker' and value %}
@@ -77,6 +65,17 @@
     <button class="js-textareacopybtn">Copy Command</button>
     <br>
 </div>
+{% endif %}
+{% endfor %}
+{% for blocker in blockers %}
+{% if reg in blocker.title %}
+<ul>
+  <li>
+    <a href="{% url 'viewblocker' blocker.id %}">
+       {{ blocker.title }}
+    </a>
+  </li>
+</ul>
 {% endif %}
 {% endfor %}
 <script>

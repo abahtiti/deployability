@@ -18,6 +18,7 @@ class KnownProblems(models.Model):
     # title (ex: iad6-71)
     title = models.CharField(max_length=100)
     body = models.TextField(blank=True)
+    fix = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
         return self.title
